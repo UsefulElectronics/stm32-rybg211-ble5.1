@@ -24,6 +24,16 @@
 
 #define BLE_MODULE_RESET_PIN			GPIO_PIN_14
 #define BLE_MODULE_RESET_GPIO_PORT		GPIOB
+
+//AT command set
+
+#define BLE_NAME_SET					"AT+NAME="
+#define BLE_DATA_SEND	 				"AT+SEND="
+#define BLE_POWER_SET					"AT+CRFOP="
+
+#define BLE_CMD_TERM					"\r\n"
+#define BLE_NEW_FIELD					","
+
 /* ENUMORATIONS --------------------------------------------------------------*/
 
 /* STRUCTURES & TYPEDEFS -----------------------------------------------------*/

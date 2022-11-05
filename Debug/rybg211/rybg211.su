@@ -1,1 +1,2 @@
-../rybg211/rybg211.c:28:6:bleModuleInit	8	static
+../rybg211/rybg211.c:29:6:rybg211_bleModuleInit	8	static
+../rybg211/rybg211.c:36:6:rybg211_setDeviceName	24	static

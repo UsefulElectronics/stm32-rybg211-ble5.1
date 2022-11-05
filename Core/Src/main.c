@@ -94,6 +94,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   HAL_UARTEx_ReceiveToIdle_DMA(&huart1, (uint8_t*) hBleModule.rxBuffer, BLE_MODULE_BUFFER_SIZE);
+  __HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -232,6 +233,16 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+	hBleModule.controlFlags.flag.packetReceived = ENABLE;
+
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart1, (uint8_t*) hBleModule.rxBuffer, BLE_MODULE_BUFFER_SIZE);
+
+	hBleModule.rxPacketSize = Size;
+
+	__HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
+}
 
 /* USER CODE END 4 */
 
