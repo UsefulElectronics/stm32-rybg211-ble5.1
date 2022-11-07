@@ -81,9 +81,9 @@ typedef struct
 {
 	uint8_t* pCdcRxBuffer;
 	uint8_t* pCdcTxBuffer;
-	uin16_t  cdcRxPacketSize;
+	uint16_t  cdcRxPacketSize;
 	void*	 cbCdcRxPacket;
-};
+}hCdcBuffer_t;
 /* USER CODE END EXPORTED_MACRO */
 
 /**
@@ -111,10 +111,11 @@ extern USBD_CDC_ItfTypeDef USBD_Interface_fops_FS;
   * @{
   */
 
-uint8_t CDC_Transmit_FS(uint8_t* Buf, uint16_t Len);
+uint8_t CDC_Transmit_FS		(uint8_t* Buf, uint16_t Len);
 
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
-
+void 		CDC_Handler_Init_FS	(void* cdcRxCallback);
+uint16_t 	CDC_GetRxData		(uint8_t* cdcRxBufferTarget);
 /* USER CODE END EXPORTED_FUNCTIONS */
 
 /**

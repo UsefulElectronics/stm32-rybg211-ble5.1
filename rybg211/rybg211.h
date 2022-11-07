@@ -63,7 +63,8 @@ typedef struct
 /* VARIABLES -----------------------------------------------------------------*/
 extern hBleModule_t hBleModule;
 /* FUNCTIONS DECLARATION -----------------------------------------------------*/
-
+void rybg211_bleModuleInit(void);
+void rybg211_setDeviceName(uint8_t* moduleBuffer, char* nameString);
 
 
 #endif /* RYBG211_H_ */

@@ -94,7 +94,7 @@ uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
 uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
 
 /* USER CODE BEGIN PRIVATE_VARIABLES */
-
+static hCdcBuffer_t cdcHandeler;
 /* USER CODE END PRIVATE_VARIABLES */
 
 /**
@@ -264,6 +264,9 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 
 	USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
 	USBD_CDC_ReceivePacket(&hUsbDeviceFS);
+	//Set the received packet length
+	cdcHandeler.cdcRxPacketSize = *Len;
+
 	CDC_Transmit_FS(Buf, hUsbDeviceFS.ep0_data_len);
 
 	return (USBD_OK);
@@ -319,7 +322,25 @@ static int8_t CDC_TransmitCplt_FS(uint8_t *Buf, uint32_t *Len, uint8_t epnum)
 }
 
 /* USER CODE BEGIN PRIVATE_FUNCTIONS_IMPLEMENTATION */
+void CDC_Handler_Init_FS	(void* cdcRxCallback)
+{
+	memset(&cdcHandeler, 0, sizeof(hCdcBuffer_t));
 
+	cdcHandeler.cbCdcRxPacket = cdcRxCallback;
+
+	cdcHandeler.pCdcRxBuffer = UserRxBufferFS;
+
+	cdcHandeler.pCdcTxBuffer = UserTxBufferFS;
+}
+
+uint16_t CDC_GetRxData(uint8_t* cdcRxBufferTarget)
+{
+	uint16_t packetSize = cdcHandeler.cdcRxPacketSize;
+
+	memcpy(cdcRxBufferTarget, cdcHandeler.cbCdcRxPacket, packetSize);
+
+	return packetSize;
+}
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 
 /**

@@ -37,11 +37,19 @@ void rybg211_setDeviceName(uint8_t* moduleBuffer, char* nameString)
 {
 	uint8_t nameStringSize = strlen(nameString);
 
-	memcpy(moduleBuffer ,BLE_NAME_SET, nameStringSize);
+	memcpy(moduleBuffer ,BLE_NAME_SET, sizeof(BLE_NAME_SET));
+
+	sprintf((char*)moduleBuffer, "%s%d%s%s%s",BLE_NAME_SET,
+										nameStringSize,
+										BLE_NEW_FIELD,
+										nameString,
+										BLE_CMD_TERM);
 
 
+	hBleModule.txPacketSize = strlen((char*)moduleBuffer);
 
-	strcat((char*) moduleBuffer ,BLE_NEW_FIELD);
+	hBleModule.controlFlags.flag.packetToTransmit = ENABLE;
 }
+
 
 /**************************  Useful Electronics  ****************END OF FILE***/

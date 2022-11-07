@@ -54,7 +54,7 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
-
+static void main_UartTxTask();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -95,6 +95,10 @@ int main(void)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
+  rybg211_bleModuleInit();
+
+  rybg211_setDeviceName(hBleModule.txBuffer, "BLE Bridge");
+
   HAL_UARTEx_ReceiveToIdle_DMA(&huart1, (uint8_t*) hBleModule.rxBuffer, BLE_MODULE_BUFFER_SIZE);
   __HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
   /* USER CODE END 2 */
@@ -103,6 +107,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+	  main_UartTxTask();
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -243,6 +250,19 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	hBleModule.rxPacketSize = Size;
 
 	__HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
+}
+
+
+void main_UartTxTask()
+{
+	if(hBleModule.controlFlags.flag.packetToTransmit && (HAL_GetTick() - hBleModule.txTimer > 1000))
+	{
+		HAL_UART_Transmit_DMA(&huart1, (uint8_t*) hBleModule.txBuffer, hBleModule.txPacketSize);
+
+		hBleModule.controlFlags.flag.packetToTransmit = DISABLE;
+
+		hBleModule.txTimer = HAL_GetTick();
+	}
 }
 
 /* USER CODE END 4 */
