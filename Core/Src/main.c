@@ -55,6 +55,7 @@ static void MX_DMA_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 static void main_UartTxTask();
+static void main_UartRxTask();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -109,6 +110,8 @@ int main(void)
   {
 
 	  main_UartTxTask();
+
+	  main_UartRxTask();
 
     /* USER CODE END WHILE */
 
@@ -262,6 +265,17 @@ void main_UartTxTask()
 		hBleModule.controlFlags.flag.packetToTransmit = DISABLE;
 
 		hBleModule.txTimer = HAL_GetTick();
+	}
+}
+
+void main_UartRxTask()
+{
+	if(hBleModule.controlFlags.flag.packetReceived)
+	{
+		rybg211_rxPacketParser(hBleModule.rxBuffer, hBleModule.rxPacketSize);
+
+		hBleModule.controlFlags.flag.packetReceived = DISABLE;
+
 	}
 }
 

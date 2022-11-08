@@ -31,6 +31,16 @@
 #define BLE_DATA_SEND	 				"AT+SEND="
 #define BLE_POWER_SET					"AT+CRFOP="
 
+#define BLE_DATA_RX						"+RCV"
+#define BLE_NEW_CONNECTION				"+++++C"
+#define BLE_NEW_DISCONNECTION			"-----#"
+
+#define BLE_CONNECTION_BYTE_POSITION	6
+#define BLE_RX_DATA_BYTE_POSITION		5
+
+
+#define BLE_PARSER_CHAR_COUNT			4
+
 #define BLE_CMD_TERM					"\r\n"
 #define BLE_NEW_FIELD					","
 
@@ -57,6 +67,7 @@ typedef struct
 	uint32_t 		httpTimer;
 	uint32_t 		txTimer;
 	uint32_t 		rxTimer;
+	char			ConnectedDevice;
 	char 			txBuffer[BLE_MODULE_BUFFER_SIZE];
 	char 			rxBuffer[BLE_MODULE_BUFFER_SIZE];
 }hBleModule_t;
@@ -64,7 +75,8 @@ typedef struct
 extern hBleModule_t hBleModule;
 /* FUNCTIONS DECLARATION -----------------------------------------------------*/
 void rybg211_bleModuleInit(void);
-void rybg211_setDeviceName(uint8_t* moduleBuffer, char* nameString);
+void rybg211_setDeviceName(char* moduleBuffer, char* nameString);
+void rybg211_rxPacketParser(char* moduleBuffer, uint8_t packetSize);
 
 
 #endif /* RYBG211_H_ */

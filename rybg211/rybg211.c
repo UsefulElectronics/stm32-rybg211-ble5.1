@@ -33,7 +33,7 @@ void rybg211_bleModuleInit(void)
 	HAL_GPIO_WritePin(BLE_MODULE_RESET_GPIO_PORT, BLE_MODULE_RESET_PIN, ENABLE);
 }
 
-void rybg211_setDeviceName(uint8_t* moduleBuffer, char* nameString)
+void rybg211_setDeviceName(char* moduleBuffer, char* nameString)
 {
 	uint8_t nameStringSize = strlen(nameString);
 
@@ -49,6 +49,28 @@ void rybg211_setDeviceName(uint8_t* moduleBuffer, char* nameString)
 	hBleModule.txPacketSize = strlen((char*)moduleBuffer);
 
 	hBleModule.controlFlags.flag.packetToTransmit = ENABLE;
+}
+
+void rybg211_rxPacketParser(char* moduleBuffer, uint8_t packetSize)
+{
+
+	char tempBuffer[BLE_MODULE_BUFFER_SIZE] = {0};
+
+	if(0 == memcmp(moduleBuffer, BLE_DATA_RX, BLE_PARSER_CHAR_COUNT))
+	{
+		memcpy(tempBuffer, moduleBuffer, packetSize);
+
+	}
+	else if(0 == memcmp(moduleBuffer, BLE_NEW_CONNECTION,BLE_PARSER_CHAR_COUNT))
+	{
+		hBleModule.ConnectedDevice = moduleBuffer[6];
+	}
+	else if(0 == memcmp(moduleBuffer, BLE_NEW_DISCONNECTION, BLE_PARSER_CHAR_COUNT))
+	{
+		hBleModule.ConnectedDevice = 0;
+	}
+	//Clear the UART DMA RX buffer
+	memset(moduleBuffer, 0, BLE_MODULE_BUFFER_SIZE);
 }
 
 
