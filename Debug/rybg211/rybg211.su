@@ -1,3 +1,5 @@
-../rybg211/rybg211.c:29:6:rybg211_bleModuleInit	8	static
-../rybg211/rybg211.c:36:6:rybg211_setDeviceName	40	static
-../rybg211/rybg211.c:54:6:rybg211_rxPacketParser	272	static
+../rybg211/rybg211.c:38:6:rybg211_bleModuleInit	8	static
+../rybg211/rybg211.c:45:6:rybg211_setDeviceName	40	static
+../rybg211/rybg211.c:63:6:rybg211_rxPacketParser	272	static
+../rybg211/rybg211.c:98:9:asciiToValue	32	static
+../rybg211/rybg211.c:142:9:valueToAscii	24	static

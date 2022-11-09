@@ -22,6 +22,15 @@ hBleModule_t hBleModule;
 /* DEFINITIONS ---------------------------------------------------------------*/
 
 /* MACROS --------------------------------------------------------------------*/
+#define ONE_DIGITLIMIT			9
+#define TWO_DIGITLIMIT			99
+#define THREE_DIGITLIMIT		999
+#define FOUR_DIGITLIMIT			9999
+
+#define ONE_DIGIT				0
+#define TWO_DIGIT				1
+#define THREE_DIGIT				2
+#define ASCII_STARTING_VALUE			'0'
 
 /* PRIVATE FUNCTIONS DECLARATION ---------------------------------------------*/
 
@@ -73,5 +82,129 @@ void rybg211_rxPacketParser(char* moduleBuffer, uint8_t packetSize)
 	memset(moduleBuffer, 0, BLE_MODULE_BUFFER_SIZE);
 }
 
+/**
+ * @brief 	The passed string head must start with a numeric character and this function will
+ * 			convert the digits in the sting into an integer value and store it in targetValue
+ * 			Note that this function will keep String without any change.
+ *			Currently only 3 digit conversion is supported by this function.
+ *
+ * @param 	targetValue : After ASCII to Integer conversion the integer value will be stored here.
+ *
+ * @param 	String		: String of numeric characters to be converted to one single integer and
+ * 						  stored in targetValue. the value stored in String won't be changed.
+ *
+ * @return	This function will return the number of found digits in the passed String.
+ */
+uint8_t asciiToValue(uint32_t* targetValue, uint8_t* String)
+{
+	uint8_t 	digitCount  = 0;
+	uint32_t 	tempValue 	= 0;
+	uint16_t 	tens 		= 0;
+	//Count the number of digits in the string
+	while(isdigit(String[digitCount]))
+	{
+		++digitCount;
+	}
+	//This check is done to prevent this function from execution if non alphanumeric string is passed to this function.
+	if(0 != digitCount)
+	{
+		//Operation fix
+		digitCount -= 1;
+		//determines the multiplications of tens
+		tens = digitCount == ONE_DIGIT   ? 1   : tens;
+		tens = digitCount == TWO_DIGIT   ? 10  : tens;
+		tens = digitCount == THREE_DIGIT ? 100 : tens;
+		//Start calculating the integer value out of the passed digits
+		for(int8_t i = 0; i <= digitCount; ++i)
+		{
+			tempValue = tempValue + ((String[i] - ASCII_STARTING_VALUE) * tens);
+			tens = tens / 10;
+		}
+		//Pass the obtained integer value to targetValue that will be returned
+		*targetValue = tempValue;
+		//digitCount will carry the number of found digits in the String
+		++digitCount;
+	}
+	return digitCount;
+}
 
+/**
+ * @brief	the passed value will be converted to numeric characters and stored in targetString
+ *			right after determining the number of digits that the passed value has. This function supports
+ *			5 digits number conversion
+ *
+ * @param 	value			: the integer to be converted to numeric characters.
+ *
+ * @param 	targetString	: this is where the converted numeric characters will be stored.
+ *
+ * @return	This function will return the number of found digits in the passed value.
+ */
+uint8_t valueToAscii(uint32_t value, uint8_t* targetString)
+{
+	uint8_t digitPosition = 0;
+	//=====> Made up rule:
+	//value/(digit to obtain) %10 (%10 is to get rid of upper tens)
+	if(value > FOUR_DIGITLIMIT)
+	{
+		targetString[digitPosition] = (value / 10000) 		+ ASCII_STARTING_VALUE;
+		++digitPosition;
+		targetString[digitPosition] = (value / 1000) % 10	+ ASCII_STARTING_VALUE;
+		++digitPosition;
+		targetString[digitPosition] = (value / 100) % 10 	+ ASCII_STARTING_VALUE;
+		++digitPosition;
+		targetString[digitPosition] = (value / 10) % 10 	+ ASCII_STARTING_VALUE;
+		++digitPosition;
+		targetString[digitPosition] = (value % 10)  		+ ASCII_STARTING_VALUE;
+		++digitPosition;
+	}
+	else
+	{
+		if(value > THREE_DIGITLIMIT)
+		{
+			//The passed value is 4 digit value
+			targetString[digitPosition] = (value / 1000) 		+ ASCII_STARTING_VALUE;
+			++digitPosition;
+			targetString[digitPosition] = (value / 100) % 10 	+ ASCII_STARTING_VALUE;
+			++digitPosition;
+			targetString[digitPosition] = (value / 10) % 10 	+ ASCII_STARTING_VALUE;
+			++digitPosition;
+			targetString[digitPosition] = (value % 10)  		+ ASCII_STARTING_VALUE;
+			++digitPosition;
+		}
+		else
+		{
+			if(value > TWO_DIGITLIMIT)
+			{
+				//The passed value is 3 digit value
+				targetString[digitPosition] = (value / 100) 	+ ASCII_STARTING_VALUE;
+				++digitPosition;
+				targetString[digitPosition] = (value / 10) % 10 + ASCII_STARTING_VALUE;
+				++digitPosition;
+				targetString[digitPosition] = (value % 10)  	+ ASCII_STARTING_VALUE;
+				++digitPosition;
+			}
+			else
+			{
+				if(value > ONE_DIGITLIMIT)
+				{
+					//The passed value is 2 digit value
+					targetString[digitPosition] = (value / 10) 	+ ASCII_STARTING_VALUE;
+					++digitPosition;
+					targetString[digitPosition] = (value % 10) 	+ ASCII_STARTING_VALUE;
+					++digitPosition;
+				}
+				else
+				{
+					//The passed value is 1 digit value
+					targetString[digitPosition] = value + ASCII_STARTING_VALUE;
+					++digitPosition;
+				}
+			}
+		}
+	}
+
+
+	//digitPosition will carry the number of found digits in the passed value integer.
+	return digitPosition;
+}
 /**************************  Useful Electronics  ****************END OF FILE***/
