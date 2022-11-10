@@ -37,6 +37,7 @@
 
 #define BLE_CONNECTION_BYTE_POSITION	6
 #define BLE_RX_DATA_BYTE_POSITION		5
+#define BLE_RX_SIZE_BYTE_POSITION		7
 
 
 #define BLE_PARSER_CHAR_COUNT			4
@@ -77,9 +78,11 @@ typedef struct
 /* VARIABLES -----------------------------------------------------------------*/
 extern hBleModule_t hBleModule;
 /* FUNCTIONS DECLARATION -----------------------------------------------------*/
-void rybg211_bleModuleInit(void);
-void rybg211_setDeviceName(char* moduleBuffer, char* nameString);
-void rybg211_rxPacketParser(char* moduleBuffer, uint8_t packetSize);
+void rybg211_bleModuleInit			(void);
+void rybg211_setDeviceName			(char* moduleBuffer, char* nameString);
+uint8_t rybg211_rxPacketParser		(char* moduleBuffer, uint8_t packetSize);
+uint32_t rybg211_rxDataRead			(char* moduleBuffer, char* targertBuffer);
+uint8_t asciiToValue					(uint32_t* targetValue, uint8_t* String);
 
 
 #endif /* RYBG211_H_ */

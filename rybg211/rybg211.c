@@ -15,6 +15,8 @@
 #include "rybg211.h"
 #include "stm32f4xx_hal.h"
 #include "string.h"
+#include "stdbool.h"
+#include "ctype.h"
 /* PRIVATE STRUCTRES ---------------------------------------------------------*/
 
 /* VARIABLES -----------------------------------------------------------------*/
@@ -60,26 +62,29 @@ void rybg211_setDeviceName(char* moduleBuffer, char* nameString)
 	hBleModule.controlFlags.flag.packetToTransmit = ENABLE;
 }
 
-void rybg211_rxPacketParser(char* moduleBuffer, uint8_t packetSize)
+uint8_t rybg211_rxPacketParser(char* moduleBuffer, uint8_t packetSize)
 {
-
-	char tempBuffer[BLE_MODULE_BUFFER_SIZE] = {0};
+	uint8_t packetToRead = false;
 
 	if(0 == memcmp(moduleBuffer, BLE_DATA_RX, BLE_PARSER_CHAR_COUNT))
 	{
-		memcpy(tempBuffer, moduleBuffer, packetSize);
-
+		//Activation to read the data part of the received packet.
+		packetToRead = true;
 	}
 	else if(0 == memcmp(moduleBuffer, BLE_NEW_CONNECTION,BLE_PARSER_CHAR_COUNT))
 	{
 		hBleModule.ConnectedDevice = moduleBuffer[6];
+		//Clear the UART DMA RX buffer
+		memset(moduleBuffer, 0, BLE_MODULE_BUFFER_SIZE);
 	}
 	else if(0 == memcmp(moduleBuffer, BLE_NEW_DISCONNECTION, BLE_PARSER_CHAR_COUNT))
 	{
 		hBleModule.ConnectedDevice = 0;
+		//Clear the UART DMA RX buffer
+		memset(moduleBuffer, 0, BLE_MODULE_BUFFER_SIZE);
 	}
-	//Clear the UART DMA RX buffer
-	memset(moduleBuffer, 0, BLE_MODULE_BUFFER_SIZE);
+
+	return packetToRead;
 }
 
 /**
@@ -206,5 +211,27 @@ uint8_t valueToAscii(uint32_t value, uint8_t* targetString)
 
 	//digitPosition will carry the number of found digits in the passed value integer.
 	return digitPosition;
+}
+
+
+/**
+ * @brief
+ *
+ * @param moduleBuffer
+ * @param targertBuffer
+ * @return
+ */
+uint32_t rybg211_rxDataRead(char* moduleBuffer, char* targertBuffer)
+{
+	//+1 is used to ignore the ',' from the received packet and jump directly to the data field.
+	uint8_t dataPositionOffset = BLE_RX_SIZE_BYTE_POSITION + 1;
+
+	uint32_t length = 0;
+	//Convert the size from ASCII to integer format and obtain the number of digits to adjust the correct data positio.
+	dataPositionOffset += asciiToValue(&length, (uint8_t*)moduleBuffer + BLE_RX_SIZE_BYTE_POSITION);
+
+	memcpy(targertBuffer, moduleBuffer + dataPositionOffset, length);
+
+	return length;
 }
 /**************************  Useful Electronics  ****************END OF FILE***/

@@ -31,7 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#define COMMON_BUFFER_SIZE		256
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -53,7 +53,27 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+typedef union
+{	uint8_t all;
+	struct
+	{
+		uint8_t bleToUsb		:1,
+				usbToBle		:1,
+				reserved		:6;
 
+	}flag;
+
+}flags_t;
+
+typedef struct
+{
+	flags_t			controlFlags;
+	uint16_t 		blePacketSize;
+	uint16_t 		usbPacketSize;
+	uint32_t 		timer;
+	char 			bleBuffer[COMMON_BUFFER_SIZE];
+	char 			usbBuffer[COMMON_BUFFER_SIZE];
+}hCommonBuffer_t;
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

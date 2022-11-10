@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "rybg211.h"
+#include "usbd_cdc_if.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,7 +46,7 @@ DMA_HandleTypeDef hdma_usart1_rx;
 DMA_HandleTypeDef hdma_usart1_tx;
 
 /* USER CODE BEGIN PV */
-
+hCommonBuffer_t hBridge;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,6 +57,8 @@ static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 static void main_UartTxTask();
 static void main_UartRxTask();
+static void main_bridgeDataTransfare();
+static void main_UsbRxTask(char* cdcRxBuffer, uint16_t packetSize);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -96,6 +99,8 @@ int main(void)
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
 
+  CDC_Handler_Init_FS	(main_UsbRxTask);
+
   rybg211_bleModuleInit();
 
   rybg211_setDeviceName(hBleModule.txBuffer, "BLE Bridge");
@@ -112,6 +117,8 @@ int main(void)
 	  main_UartTxTask();
 
 	  main_UartRxTask();
+
+	  main_bridgeDataTransfare();
 
     /* USER CODE END WHILE */
 
@@ -256,7 +263,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 }
 
 
-void main_UartTxTask()
+static void main_UartTxTask()
 {
 	if(hBleModule.controlFlags.flag.packetToTransmit && (HAL_GetTick() - hBleModule.txTimer > 1000))
 	{
@@ -268,14 +275,45 @@ void main_UartTxTask()
 	}
 }
 
-void main_UartRxTask()
+static void main_UartRxTask()
 {
 	if(hBleModule.controlFlags.flag.packetReceived)
 	{
-		rybg211_rxPacketParser(hBleModule.rxBuffer, hBleModule.rxPacketSize);
+		if(rybg211_rxPacketParser(hBleModule.rxBuffer, hBleModule.rxPacketSize))
+		{
+			hBridge.blePacketSize = (uint16_t)rybg211_rxDataRead(hBleModule.rxBuffer, hBridge.bleBuffer);
 
+			hBridge.controlFlags.flag.bleToUsb = ENABLE;
+		}
 		hBleModule.controlFlags.flag.packetReceived = DISABLE;
 
+	}
+}
+
+static void main_UsbRxTask(char* cdcRxBuffer, uint16_t packetSize)
+{
+
+	memcpy(hBridge.usbBuffer, cdcRxBuffer, packetSize);
+
+	hBridge.usbPacketSize = packetSize;
+
+	hBridge.controlFlags.flag.usbToBle = ENABLE;
+}
+
+static void main_bridgeDataTransfare()
+{
+	if(hBridge.controlFlags.flag.bleToUsb)
+	{
+		hBridge.controlFlags.flag.bleToUsb = DISABLE;
+
+		//Place feedline character at the end of the packet and increment the size by 1.
+		hBridge.bleBuffer[hBridge.blePacketSize++] = '\n';
+
+		CDC_Transmit_FS((uint8_t*) hBridge.bleBuffer, (uint16_t)hBridge.blePacketSize);
+	}
+	else if(hBridge.controlFlags.flag.usbToBle)
+	{
+		hBridge.controlFlags.flag.usbToBle = DISABLE;
 	}
 }
 

@@ -267,7 +267,7 @@ static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 	//Set the received packet length
 	cdcHandeler.cdcRxPacketSize = *Len;
 
-	CDC_Transmit_FS(Buf, hUsbDeviceFS.ep0_data_len);
+	cdcHandeler.cbCdcRxPacket(cdcHandeler.pCdcRxBuffer, cdcHandeler.cdcRxPacketSize);
 
 	return (USBD_OK);
   /* USER CODE END 6 */
