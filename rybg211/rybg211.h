@@ -82,7 +82,8 @@ void rybg211_bleModuleInit			(void);
 void rybg211_setDeviceName			(char* moduleBuffer, char* nameString);
 uint8_t rybg211_rxPacketParser		(char* moduleBuffer, uint8_t packetSize);
 uint32_t rybg211_rxDataRead			(char* moduleBuffer, char* targertBuffer);
-uint8_t asciiToValue					(uint32_t* targetValue, uint8_t* String);
+void  rybg211_txDataRead			(char* moduleBuffer, char* targertBuffer);
+uint8_t asciiToValue				(uint32_t* targetValue, uint8_t* String);
 
 
 #endif /* RYBG211_H_ */

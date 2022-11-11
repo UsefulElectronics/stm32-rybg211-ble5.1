@@ -82,7 +82,7 @@ typedef struct
 	uint8_t* pCdcRxBuffer;
 	uint8_t* pCdcTxBuffer;
 	uint16_t  cdcRxPacketSize;
-	void*	 cbCdcRxPacket;
+	void	(*cbCdcRxPacket)(char* cdcRxBuffer, uint16_t packetSize);
 }hCdcBuffer_t;
 /* USER CODE END EXPORTED_MACRO */
 

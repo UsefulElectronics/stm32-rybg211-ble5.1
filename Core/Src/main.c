@@ -289,7 +289,13 @@ static void main_UartRxTask()
 
 	}
 }
-
+/**
+ * @brief 	This is a call back function passed to the CDC handler to it is called every time a packet is received over USB
+ *
+ * @param 	cdcRxBuffer	:	Buffer will carry the data received over USB.
+ *
+ * @param 	packetSize	:	The size of the received packet.
+ */
 static void main_UsbRxTask(char* cdcRxBuffer, uint16_t packetSize)
 {
 
@@ -313,6 +319,8 @@ static void main_bridgeDataTransfare()
 	}
 	else if(hBridge.controlFlags.flag.usbToBle)
 	{
+
+
 		hBridge.controlFlags.flag.usbToBle = DISABLE;
 	}
 }
