@@ -319,7 +319,9 @@ static void main_bridgeDataTransfare()
 	}
 	else if(hBridge.controlFlags.flag.usbToBle)
 	{
+		rybg211_txDataSend(hBridge.usbBuffer, hBridge.usbPacketSize);
 
+		HAL_UART_Transmit_DMA(&huart1, (uint8_t*) hBleModule.txBuffer, hBleModule.txPacketSize);
 
 		hBridge.controlFlags.flag.usbToBle = DISABLE;
 	}

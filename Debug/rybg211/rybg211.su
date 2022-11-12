@@ -4,3 +4,4 @@
 ../rybg211/rybg211.c:103:9:asciiToValue	32	static
 ../rybg211/rybg211.c:147:9:valueToAscii	24	static
 ../rybg211/rybg211.c:224:10:rybg211_rxDataRead	24	static
+../rybg211/rybg211.c:238:7:rybg211_txDataSend	40	static

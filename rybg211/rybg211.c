@@ -234,4 +234,18 @@ uint32_t rybg211_rxDataRead(char* moduleBuffer, char* targertBuffer)
 
 	return length;
 }
+
+void  rybg211_txDataSend			(char* sourceBuffer, uint16_t packetSize)
+{
+
+	sprintf((char*)hBleModule.txBuffer, "%s%c%s%d%s%s%s",BLE_DATA_SEND,
+													hBleModule.ConnectedDevice,
+													BLE_NEW_FIELD,
+													packetSize,
+													BLE_NEW_FIELD,
+													sourceBuffer,
+													BLE_CMD_TERM);
+
+	hBleModule.txPacketSize = strlen(hBleModule.txBuffer);
+}
 /**************************  Useful Electronics  ****************END OF FILE***/
