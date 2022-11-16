@@ -298,12 +298,23 @@ static void main_UartRxTask()
  */
 static void main_UsbRxTask(char* cdcRxBuffer, uint16_t packetSize)
 {
+	if(hBleModule.ConnectedDevice)
+	{
+		memcpy(hBridge.usbBuffer, cdcRxBuffer, packetSize);
 
-	memcpy(hBridge.usbBuffer, cdcRxBuffer, packetSize);
+		hBridge.usbPacketSize = packetSize;
 
-	hBridge.usbPacketSize = packetSize;
-
-	hBridge.controlFlags.flag.usbToBle = ENABLE;
+		hBridge.controlFlags.flag.usbToBle = ENABLE;
+	}
+	else
+	{
+		CDC_Transmit_FS(BLE_NO_CONNECTION_MESSAGE, strlen(BLE_NO_CONNECTION_MESSAGE));
+	}
+//	memcpy(hBridge.usbBuffer, cdcRxBuffer, packetSize);
+//
+//	hBridge.usbPacketSize = packetSize;
+//
+//	hBridge.controlFlags.flag.usbToBle = ENABLE;
 }
 
 static void main_bridgeDataTransfare()

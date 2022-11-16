@@ -45,7 +45,7 @@
 #define BLE_CMD_TERM					"\r\n"
 #define BLE_NEW_FIELD					","
 
-
+#define BLE_NO_CONNECTION_MESSAGE		"NO BLE CONNECTION\n"
 
 
 /* ENUMORATIONS --------------------------------------------------------------*/
