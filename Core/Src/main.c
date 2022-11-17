@@ -262,7 +262,10 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	__HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
 }
 
-
+/**
+ * @brief Module AT UART command transmission task
+ *
+ */
 static void main_UartTxTask()
 {
 	if(hBleModule.controlFlags.flag.packetToTransmit && (HAL_GetTick() - hBleModule.txTimer > 1000))
@@ -274,7 +277,10 @@ static void main_UartTxTask()
 		hBleModule.txTimer = HAL_GetTick();
 	}
 }
-
+/**
+ * @brief Module AT UART reception task
+ *
+ */
 static void main_UartRxTask()
 {
 	if(hBleModule.controlFlags.flag.packetReceived)

@@ -898,8 +898,10 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
  8000868:	200001c0 	.word	0x200001c0
 
 0800086c <main_UartTxTask>:
-
-
+/**
+ * @brief Module AT UART command transmission task
+ *
+ */
 static void main_UartTxTask()
 {
  800086c:	b580      	push	{r7, lr}
@@ -948,7 +950,10 @@ static void main_UartTxTask()
  80008c0:	2000017c 	.word	0x2000017c
 
 080008c4 <main_UartRxTask>:
-
+/**
+ * @brief Module AT UART reception task
+ *
+ */
 static void main_UartRxTask()
 {
  80008c4:	b580      	push	{r7, lr}
