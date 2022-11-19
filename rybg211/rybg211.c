@@ -61,7 +61,15 @@ void rybg211_setDeviceName(char* moduleBuffer, char* nameString)
 
 	hBleModule.controlFlags.flag.packetToTransmit = ENABLE;
 }
-
+/**
+ * @brief 	Parse the received packet and take action accordingly.
+ *
+ * @param 	moduleBuffer	:	BLE module reception buffer.
+ *
+ * @param 	packetSize		:	Received packet size.
+ *
+ * @return	returns 1 if there is a received message should be carried to the bridge handler.
+ */
 uint8_t rybg211_rxPacketParser(char* moduleBuffer, uint8_t packetSize)
 {
 	uint8_t packetToRead = false;
