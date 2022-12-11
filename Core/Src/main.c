@@ -50,15 +50,16 @@ hCommonBuffer_t hBridge;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
-static void MX_GPIO_Init(void);
-static void MX_DMA_Init(void);
-static void MX_USART1_UART_Init(void);
+void SystemClock_Config					(void);
+static void MX_GPIO_Init				(void);
+static void MX_DMA_Init					(void);
+static void MX_USART1_UART_Init			(void);
 /* USER CODE BEGIN PFP */
-static void main_UartTxTask();
-static void main_UartRxTask();
-static void main_bridgeDataTransfare();
-static void main_UsbRxTask(char* cdcRxBuffer, uint16_t packetSize);
+static void main_UartTxTask				(void);
+static void main_UartRxTask				(void);
+static void main_bridgeDataTransfare	(void);
+static void main_bleCommandControl		(uint8_t* cmd);
+static void main_UsbRxTask				(char* cdcRxBuffer, uint16_t packetSize);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -289,8 +290,17 @@ static void main_UartRxTask()
 		{
 			hBridge.blePacketSize = (uint16_t)rybg211_rxDataRead(hBleModule.rxBuffer, hBridge.bleBuffer);
 
-			hBridge.controlFlags.flag.bleToUsb = ENABLE;
+			if(CDC_UsbConnectionCheck())
+			{
+				hBridge.controlFlags.flag.bleToUsb = ENABLE;
+			}
+			else
+			{
+				main_bleCommandControl((uint8_t*) hBridge.bleBuffer);
+			}
+
 		}
+
 		hBleModule.controlFlags.flag.packetReceived = DISABLE;
 
 	}
@@ -316,11 +326,6 @@ static void main_UsbRxTask(char* cdcRxBuffer, uint16_t packetSize)
 	{
 		CDC_Transmit_FS(BLE_NO_CONNECTION_MESSAGE, strlen(BLE_NO_CONNECTION_MESSAGE));
 	}
-//	memcpy(hBridge.usbBuffer, cdcRxBuffer, packetSize);
-//
-//	hBridge.usbPacketSize = packetSize;
-//
-//	hBridge.controlFlags.flag.usbToBle = ENABLE;
 }
 
 static void main_bridgeDataTransfare()
@@ -344,6 +349,29 @@ static void main_bridgeDataTransfare()
 	}
 }
 
+
+static void main_bleCommandControl(uint8_t* cmd)
+{
+	switch (cmd[0])
+	{
+		case 0:
+			HAL_GPIO_WritePin(GPIOB, LED1_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOB, LED2_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOB, LED3_Pin, GPIO_PIN_RESET);
+			break;
+		case 1:
+			HAL_GPIO_TogglePin(GPIOB, LED1_Pin);
+			break;
+		case 2:
+			HAL_GPIO_TogglePin(GPIOB, LED2_Pin);
+			break;
+		case 3:
+			HAL_GPIO_TogglePin(GPIOB, LED3_Pin);
+			break;
+		default:
+			break;
+	}
+}
 /* USER CODE END 4 */
 
 /**

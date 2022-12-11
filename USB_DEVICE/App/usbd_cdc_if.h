@@ -30,7 +30,7 @@
 #include "usbd_cdc.h"
 
 /* USER CODE BEGIN INCLUDE */
-
+#include "stdbool.h"
 /* USER CODE END INCLUDE */
 
 /** @addtogroup STM32_USB_OTG_DEVICE_LIBRARY
@@ -83,6 +83,7 @@ typedef struct
 	uint8_t* pCdcTxBuffer;
 	uint16_t  cdcRxPacketSize;
 	void	(*cbCdcRxPacket)(char* cdcRxBuffer, uint16_t packetSize);
+	uint16_t cdcUsbConnectionFlag;
 }hCdcBuffer_t;
 /* USER CODE END EXPORTED_MACRO */
 
@@ -114,8 +115,9 @@ extern USBD_CDC_ItfTypeDef USBD_Interface_fops_FS;
 uint8_t CDC_Transmit_FS		(uint8_t* Buf, uint16_t Len);
 
 /* USER CODE BEGIN EXPORTED_FUNCTIONS */
-void 		CDC_Handler_Init_FS	(void* cdcRxCallback);
-uint16_t 	CDC_GetRxData		(uint8_t* cdcRxBufferTarget);
+bool 		CDC_UsbConnectionCheck	(void);
+void 		CDC_Handler_Init_FS		(void* cdcRxCallback);
+uint16_t 	CDC_GetRxData			(uint8_t* cdcRxBufferTarget);
 /* USER CODE END EXPORTED_FUNCTIONS */
 
 /**

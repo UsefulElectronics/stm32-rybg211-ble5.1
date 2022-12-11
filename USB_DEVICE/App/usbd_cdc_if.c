@@ -180,66 +180,69 @@ static int8_t CDC_DeInit_FS(void)
 static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 {
   /* USER CODE BEGIN 5 */
-  switch(cmd)
-  {
-    case CDC_SEND_ENCAPSULATED_COMMAND:
+	//USB connection has been detected.
+	cdcHandeler.cdcUsbConnectionFlag = true;
 
-    break;
+	switch(cmd)
+	{
+	case CDC_SEND_ENCAPSULATED_COMMAND:
 
-    case CDC_GET_ENCAPSULATED_RESPONSE:
+	break;
 
-    break;
+	case CDC_GET_ENCAPSULATED_RESPONSE:
 
-    case CDC_SET_COMM_FEATURE:
+	break;
 
-    break;
+	case CDC_SET_COMM_FEATURE:
 
-    case CDC_GET_COMM_FEATURE:
+	break;
 
-    break;
+	case CDC_GET_COMM_FEATURE:
 
-    case CDC_CLEAR_COMM_FEATURE:
+	break;
 
-    break;
+	case CDC_CLEAR_COMM_FEATURE:
 
-  /*******************************************************************************/
-  /* Line Coding Structure                                                       */
-  /*-----------------------------------------------------------------------------*/
-  /* Offset | Field       | Size | Value  | Description                          */
-  /* 0      | dwDTERate   |   4  | Number |Data terminal rate, in bits per second*/
-  /* 4      | bCharFormat |   1  | Number | Stop bits                            */
-  /*                                        0 - 1 Stop bit                       */
-  /*                                        1 - 1.5 Stop bits                    */
-  /*                                        2 - 2 Stop bits                      */
-  /* 5      | bParityType |  1   | Number | Parity                               */
-  /*                                        0 - None                             */
-  /*                                        1 - Odd                              */
-  /*                                        2 - Even                             */
-  /*                                        3 - Mark                             */
-  /*                                        4 - Space                            */
-  /* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */
-  /*******************************************************************************/
-    case CDC_SET_LINE_CODING:
+	break;
 
-    break;
+	/*******************************************************************************/
+	/* Line Coding Structure                                                       */
+	/*-----------------------------------------------------------------------------*/
+	/* Offset | Field       | Size | Value  | Description                          */
+	/* 0      | dwDTERate   |   4  | Number |Data terminal rate, in bits per second*/
+	/* 4      | bCharFormat |   1  | Number | Stop bits                            */
+	/*                                        0 - 1 Stop bit                       */
+	/*                                        1 - 1.5 Stop bits                    */
+	/*                                        2 - 2 Stop bits                      */
+	/* 5      | bParityType |  1   | Number | Parity                               */
+	/*                                        0 - None                             */
+	/*                                        1 - Odd                              */
+	/*                                        2 - Even                             */
+	/*                                        3 - Mark                             */
+	/*                                        4 - Space                            */
+	/* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */
+	/*******************************************************************************/
+	case CDC_SET_LINE_CODING:
 
-    case CDC_GET_LINE_CODING:
+	break;
 
-    break;
+	case CDC_GET_LINE_CODING:
 
-    case CDC_SET_CONTROL_LINE_STATE:
+	break;
 
-    break;
+	case CDC_SET_CONTROL_LINE_STATE:
 
-    case CDC_SEND_BREAK:
+	break;
 
-    break;
+	case CDC_SEND_BREAK:
 
-  default:
-    break;
-  }
+	break;
 
-  return (USBD_OK);
+	default:
+	break;
+	}
+
+	return (USBD_OK);
   /* USER CODE END 5 */
 }
 
@@ -340,6 +343,11 @@ uint16_t CDC_GetRxData(uint8_t* cdcRxBufferTarget)
 	memcpy(cdcRxBufferTarget, cdcHandeler.cbCdcRxPacket, packetSize);
 
 	return packetSize;
+}
+
+bool CDC_UsbConnectionCheck(void)
+{
+	return cdcHandeler.cdcUsbConnectionFlag;
 }
 /* USER CODE END PRIVATE_FUNCTIONS_IMPLEMENTATION */
 
