@@ -43,7 +43,13 @@ void rybg211_bleModuleInit(void)
 
 	HAL_GPIO_WritePin(BLE_MODULE_RESET_GPIO_PORT, BLE_MODULE_RESET_PIN, ENABLE);
 }
-
+/**
+ * @brief 	Prepare the BLe module broadcast name set AT command
+ *
+ * @param 	moduleBuffer	:	This is the buffer that will carry the prepared AT command.
+ *
+ * @param 	nameString		:	Name string that the BLE module will broadcast.
+ */
 void rybg211_setDeviceName(char* moduleBuffer, char* nameString)
 {
 	uint8_t nameStringSize = strlen(nameString);
@@ -55,6 +61,25 @@ void rybg211_setDeviceName(char* moduleBuffer, char* nameString)
 										BLE_NEW_FIELD,
 										nameString,
 										BLE_CMD_TERM);
+
+
+	hBleModule.txPacketSize = strlen((char*)moduleBuffer);
+
+	hBleModule.controlFlags.flag.packetToTransmit = ENABLE;
+}
+/**
+ * @brief 	Prepare the BLe module broadcast and transmission power set AT command
+ *
+ * @param 	moduleBuffer	:	This is the buffer that will carry the prepared AT command.
+ *
+ * @param 	powerLevel		:	output power level value range 20 to -20.
+ */
+void rybg211_setOutputPower(char* moduleBuffer, int8_t powerLevel)
+{
+
+	sprintf((char*)moduleBuffer, "%s%d%s%s%s",BLE_NAME_SET,
+												powerLevel,
+												BLE_CMD_TERM);
 
 
 	hBleModule.txPacketSize = strlen((char*)moduleBuffer);

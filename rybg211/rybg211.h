@@ -80,6 +80,7 @@ extern hBleModule_t hBleModule;
 /* FUNCTIONS DECLARATION -----------------------------------------------------*/
 void rybg211_bleModuleInit			(void);
 void rybg211_setDeviceName			(char* moduleBuffer, char* nameString);
+void rybg211_setOutputPower			(char* moduleBuffer, int8_t powerLevel);
 uint8_t rybg211_rxPacketParser		(char* moduleBuffer, uint8_t packetSize);
 uint32_t rybg211_rxDataRead			(char* moduleBuffer, char* targertBuffer);
 void  rybg211_txDataSend			(char* sourceBuffer, uint16_t packetSize);

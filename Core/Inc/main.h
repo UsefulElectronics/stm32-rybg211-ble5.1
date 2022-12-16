@@ -49,6 +49,8 @@ extern "C" {
 
 /* USER CODE END EM */
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -77,14 +79,14 @@ typedef struct
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define LED3_Pin GPIO_PIN_1
+#define LED3_GPIO_Port GPIOB
+#define LED2_Pin GPIO_PIN_2
+#define LED2_GPIO_Port GPIOB
+#define LED1_Pin GPIO_PIN_10
+#define LED1_GPIO_Port GPIOB
 #define MODULE_RESET_Pin GPIO_PIN_14
 #define MODULE_RESET_GPIO_Port GPIOB
-#define LED1_Pin GPIO_PIN_5
-#define LED1_GPIO_Port GPIOB
-#define LED2_Pin GPIO_PIN_6
-#define LED2_GPIO_Port GPIOB
-#define LED3_Pin GPIO_PIN_7
-#define LED3_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
