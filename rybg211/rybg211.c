@@ -77,9 +77,9 @@ void rybg211_setDeviceName(char* moduleBuffer, char* nameString)
 void rybg211_setOutputPower(char* moduleBuffer, int8_t powerLevel)
 {
 
-	sprintf((char*)moduleBuffer, "%s%d%s%s%s",BLE_NAME_SET,
-												powerLevel,
-												BLE_CMD_TERM);
+	sprintf((char*)moduleBuffer, "%s%d%s",BLE_POWER_SET,
+										powerLevel,
+										BLE_CMD_TERM);
 
 
 	hBleModule.txPacketSize = strlen((char*)moduleBuffer);

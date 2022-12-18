@@ -88,7 +88,11 @@ typedef struct
 #define MODULE_RESET_Pin GPIO_PIN_14
 #define MODULE_RESET_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
-
+#define BLE_CMD_0		0
+#define BLE_CMD_1		1
+#define BLE_CMD_2		2
+#define BLE_CMD_3		3
+#define BLE_CMD_4		4
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

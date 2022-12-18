@@ -62,6 +62,7 @@ static void main_UartTxTask				(void);
 static void main_UartRxTask				(void);
 static void main_bridgeDataTransfare	(void);
 static void main_bleCommandControl		(uint8_t* cmd);
+static void main_setLedBrightness		(uint8_t dutyValue);
 static void main_UsbRxTask				(char* cdcRxBuffer, uint16_t packetSize);
 /* USER CODE END PFP */
 
@@ -108,10 +109,13 @@ int main(void)
 
   rybg211_bleModuleInit();
 
-  rybg211_setDeviceName(hBleModule.txBuffer, "BLE Bridge");
+  rybg211_setOutputPower(hBleModule.txBuffer, 20);
+//  rybg211_setDeviceName(hBleModule.txBuffer, "BLE Bridge");
 
   HAL_UARTEx_ReceiveToIdle_DMA(&huart1, (uint8_t*) hBleModule.rxBuffer, BLE_MODULE_BUFFER_SIZE);
   __HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
+
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -196,9 +200,9 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 1000-1;
+  htim3.Init.Prescaler = 10000-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 1000-1;
+  htim3.Init.Period = 100-1;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
@@ -405,25 +409,34 @@ static void main_bridgeDataTransfare()
 
 static void main_bleCommandControl(uint8_t* cmd)
 {
-	switch (cmd[0])
+	uint8_t bleCommand = cmd[0];
+	switch (bleCommand)
 	{
-		case 0:
+		case BLE_CMD_0:
 			HAL_GPIO_WritePin(GPIOB, LED1_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(GPIOB, LED2_Pin, GPIO_PIN_RESET);
 			HAL_GPIO_WritePin(GPIOB, LED3_Pin, GPIO_PIN_RESET);
 			break;
-		case 1:
+		case BLE_CMD_1:
 			HAL_GPIO_TogglePin(GPIOB, LED1_Pin);
 			break;
-		case 2:
+		case BLE_CMD_2:
 			HAL_GPIO_TogglePin(GPIOB, LED2_Pin);
 			break;
-		case 3:
+		case BLE_CMD_3:
 			HAL_GPIO_TogglePin(GPIOB, LED3_Pin);
+			break;
+		case BLE_CMD_4:
+			main_setLedBrightness(cmd[1]);
 			break;
 		default:
 			break;
 	}
+}
+
+static void main_setLedBrightness(uint8_t dutyValue)
+{
+	htim3.Instance->CCR3 = dutyValue;
 }
 /* USER CODE END 4 */
 
